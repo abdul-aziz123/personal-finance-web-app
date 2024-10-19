@@ -25,7 +25,6 @@ export default function Page() {
 
       {/* <Tab>Tab</Tab> */}
       {/* <SidebarItem variant="Menu">Placeholder</SidebarItem> */}
-      <SidebarFull />
     </div>
   );
 }
