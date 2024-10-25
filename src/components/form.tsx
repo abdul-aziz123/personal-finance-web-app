@@ -20,7 +20,7 @@ export default function FormField({
   ...props
 }: FormFieldProps) {
   return (
-    <div className={`flex flex-col gap-space50`}>
+    <div className="flex flex-col gap-space50">
       <label className="text-text5_bold font-bold leading-[18px] text-Grey500">
         {label}
       </label>
@@ -39,4 +39,19 @@ export default function FormField({
       )}
     </div>
   );
+}
+
+// Usage
+
+{
+  /* <FormField
+        label="Basic Field"
+        placeholder="Placeholder"
+        helperText="Helper text"
+        IconComponent={
+          <span className="fill-Grey500 hover:fill-Grey900 active:fill-Grey900">
+            <IconCaretRight className="fill-current" />
+          </span>
+        }
+      /> */
 }
