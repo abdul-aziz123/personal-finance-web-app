@@ -39,8 +39,8 @@ const SidebarItem = ({
       className={cn(
         "group flex h-14 min-w-[80px] max-w-[276px] flex-row items-center gap-space200 rounded-br-xl rounded-tr-xl bg-Grey900 px-space400 py-space200 text-text3 font-bold text-Grey300 hover:text-Grey100",
         {
-          "active:w-[92%] active:border-l-4 active:border-l-Green active:bg-Beige100 active:px-7 active:text-Grey900":
-            variant === "Menu",
+          // "active:w-[92%] active:border-l-4 active:border-l-Green active:bg-Beige100 active:px-7 active:text-Grey900":
+          //   variant === "Menu",
           "w-[92%] border-l-4 border-l-Green bg-Beige100 px-7 text-Grey900 hover:text-Grey900":
             isActive,
         },
