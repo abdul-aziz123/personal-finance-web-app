@@ -1,95 +1,118 @@
-"use client";
+import React from "react";
+import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropDownMenu";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChevronDown } from "lucide-react";
 
-import React, { useState } from "react";
-import { AddTransactionModal } from "@/components/ui/addTransaction";
-
-export default function TransactionPage() {
-  // Preloaded sample transactions
-  const [transactions, setTransactions] = useState<any[]>([
-    {
-      transactionName: "Urban Services Hub",
-      date: "2024-08-15",
-      category: "General",
-      amount: 150.5,
-      isRecurring: false,
-    },
-    {
-      transactionName: "Savory Bliss Bistro",
-      date: "2024-08-16",
-      category: "Dining Out",
-      amount: 65.25,
-      isRecurring: false,
-    },
-    {
-      transactionName: "Grocery Store",
-      date: "2024-08-17",
-      category: "Groceries",
-      amount: 120.0,
-      isRecurring: true,
-    },
-  ]);
-
-  const handleAddTransaction = (newTransaction: any) => {
-    setTransactions((prev) => [...prev, newTransaction]);
-  };
-
+export default function transactions() {
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-1/4 bg-gray-900 text-white">
-        <div className="p-4">
-          <h1 className="text-lg font-bold">Finance</h1>
-          {/* Sidebar Links */}
-          <ul className="mt-6 space-y-4">
-            <li>Overview</li>
-            <li>Transactions</li>
-            <li>Budgets</li>
-            <li>Pots</li>
-            <li>Recurring Bills</li>
-          </ul>
-        </div>
+    <main className="flex flex-col gap-2">
+      <div className="flex gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border border-Grey900 bg-Beige100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+            Latest
+            <ChevronDown className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[120px] bg-Beige100 p-1">
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Latest
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Oldest
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              A to Z
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Z to A
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Highest
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Lowest
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border border-Grey900 bg-Beige100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+            All Transactions
+            <ChevronDown className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[120px] bg-Beige100 p-1">
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Entertainment
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Bills
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Groceries
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Dining Out
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Trasnportation
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-sm px-3 py-2 text-sm text-Grey900 hover:bg-gray-800 hover:text-white focus:bg-gray-800 focus:text-white">
+              Personal Care
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-
-      {/* Main Content */}
-      <div className="flex-grow p-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Transactions</h2>
-          <AddTransactionModal onAddTransaction={handleAddTransaction} />
-        </div>
-        {transactions.length === 0 ? (
-          <p className="mt-6 text-gray-600">No transactions found. Add one!</p>
-        ) : (
-          <table className="mt-6 w-full border-collapse text-left">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Name</th>
-                <th className="border p-2">Date</th>
-                <th className="border p-2">Category</th>
-                <th className="border p-2">Amount</th>
-                <th className="border p-2">Recurring</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((transaction, index) => (
-                <tr
-                  key={index}
-                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                >
-                  <td className="border p-2">{transaction.transactionName}</td>
-                  <td className="border p-2">{transaction.date}</td>
-                  <td className="border p-2">{transaction.category}</td>
-                  <td className="border p-2">
-                    ${transaction.amount.toFixed(2)}
-                  </td>
-                  <td className="border p-2">
-                    {transaction.isRecurring ? "Yes" : "No"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+      <div>
+        <Table>
+          <TableCaption>A list of your recent invoices.</TableCaption>
+          <TableHeader>
+            <TableRow className="text-Grey500">
+              <TableHead className="w-80">Recipient/Sender</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Transaction Date</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="flex items-center gap-space50 font-medium">
+                <span>
+                  <Avatar>
+                    <AvatarImage asChild>
+                      <Image
+                        src="/images/avatars/emma-richardson.jpg"
+                        alt="avatar"
+                        width={40}
+                        height={40}
+                      />
+                    </AvatarImage>
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </span>
+                Emma Richarlson
+              </TableCell>
+              <TableCell>General</TableCell>
+              <TableCell>04 June 2004</TableCell>
+              <TableCell className="text-right">$200</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
-    </div>
+    </main>
   );
 }
