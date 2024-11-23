@@ -94,7 +94,7 @@ export default function ToggleableSidebar() {
         <SidebarItem
           variant="Menu"
           IconComponent={<IconNavOverview />}
-          href="/dashboard"
+          href="/"
         >
           {isMaximized && "Overview"}
         </SidebarItem>

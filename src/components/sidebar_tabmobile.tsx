@@ -61,7 +61,7 @@ function SidebarItem({
 export function SidebarMobile() {
   return (
     <div className="flex h-[52px] w-full flex-row justify-between bg-Grey900 px-space200 pt-space100">
-      <SidebarItem IconComponent={<IconNavOverview />} href="/dashboard" />
+      <SidebarItem IconComponent={<IconNavOverview />} href="/" />
       <SidebarItem
         IconComponent={<IconNavTransactions />}
         href="/transactions"
@@ -82,7 +82,7 @@ export function SidebarTablet() {
       <SidebarItem
         variant="Tablet"
         IconComponent={<IconNavOverview />}
-        href="/dashboard"
+        href="/"
       >
         Overview
       </SidebarItem>

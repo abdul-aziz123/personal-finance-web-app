@@ -17,23 +17,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${public_sans.className} antialiased`}>
+      <body className={`${public_sans.className}antialiased`}>
         <div className="relative flex min-h-screen bg-Beige100">
-          {/* Sidebars for Different Screen Sizes */}
-          <div className="block">
-            <div className="fixed">
-              <ToggleableSidebar />
-            </div>
-          </div>
           <div className="absolute bottom-0 w-full md:hidden lg:hidden">
             <SidebarMobile />
           </div>
           <div className="absolute bottom-0 hidden w-full md:block lg:hidden">
             <SidebarTablet />
           </div>
-
-          {/* Main Content Area with Independent Scrolling */}
-          <main className="flex-grow p-6 md:p-12 lg:overflow-y-auto">
+          <div className="hidden h-full md:hidden lg:relative lg:block">
+            <ToggleableSidebar />
+          </div>
+          <main className="flex-grow overflow-scroll p-6 md:p-5">
             {children}
           </main>
         </div>
