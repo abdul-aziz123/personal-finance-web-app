@@ -24,7 +24,6 @@ type SidebarItemProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const SidebarItem = ({
-  variant,
   IconComponent,
   className,
   children,

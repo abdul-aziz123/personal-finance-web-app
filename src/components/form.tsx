@@ -1,5 +1,4 @@
 import React from "react";
-import { IconSearch } from "@/icons";
 
 type FormFieldProps = {
   label: string;
@@ -14,10 +13,8 @@ export default function FormField({
   label,
   placeholder,
   helperText,
-  className,
   type,
   IconComponent,
-  ...props
 }: FormFieldProps) {
   return (
     <div className="flex flex-col gap-space50">

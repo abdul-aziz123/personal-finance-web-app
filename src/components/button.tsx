@@ -31,6 +31,7 @@ export default function Button({
             variant == "page",
         },
         className,
+        { ...props },
       )}
     >
       {children}
