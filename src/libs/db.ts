@@ -6,6 +6,6 @@ export async function getAllUsers() {
 }
 
 export async function getCreateUsers(email: string) {
-  const res = await sql`select * from user`;
+  const res = await sql`select * from user where email = ${email}`;
   return res;
 }

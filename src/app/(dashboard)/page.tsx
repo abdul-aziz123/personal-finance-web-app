@@ -3,7 +3,7 @@ import { IconCaretRight, IconPot } from "@/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { getAllUsers, getCreateUsers } from "@/libs/db";
+import { getCreateUsers } from "@/libs/db";
 
 export default async function OverviewPage() {
   const session = await auth();
