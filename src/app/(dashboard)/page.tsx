@@ -1,8 +1,19 @@
 import Link from "next/link";
 import { IconCaretRight, IconPot } from "@/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { getAllUsers, getCreateUsers } from "@/libs/db";
 
-export default function OverviewPage() {
+export default async function OverviewPage() {
+  const session = await auth();
+
+  const users = await getCreateUsers("abdulaziz.syed002@gmail.com");
+  console.log(users);
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex flex-col gap-y-space250">
       <h1 className="text-3xl font-bold">Overview</h1>

@@ -22,67 +22,55 @@ import { IconCaretLeft, IconCaretRight } from "@/icons";
 
 export default function Transactions() {
   return (
-    <main className="min-h-screen bg-white p-4 md:p-6">
+    <main className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="mx-auto max-w-7xl">
         {/* Page Header */}
-        <div className="flex flex-col items-start justify-between gap-4 pt-space300 md:flex-row md:items-center">
+        <div className="flex items-center justify-between pb-6">
           <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
             Transactions
           </h1>
-          <div className="flex flex-wrap gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100">
-                Latest
-                <ChevronDown className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-36 rounded-md bg-white p-1 shadow-lg">
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Latest
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Oldest
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  A to Z
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Z to A
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Highest
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Lowest
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100">
-                All Transactions
-                <ChevronDown className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-36 rounded-md bg-white p-1 shadow-lg">
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Entertainment
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Bills
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Groceries
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Dining Out
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Transportation
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Personal Care
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <Button variant="primary" className="text-sm">
+            + Add New Transaction
+          </Button>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-4 pb-4">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search transaction"
+              className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 placeholder-gray-500 shadow-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+            />
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100">
+              Sort by: Latest
+              <ChevronDown className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-36 rounded-md bg-white p-1 shadow-lg">
+              <DropdownMenuItem>Latest</DropdownMenuItem>
+              <DropdownMenuItem>Oldest</DropdownMenuItem>
+              <DropdownMenuItem>A to Z</DropdownMenuItem>
+              <DropdownMenuItem>Z to A</DropdownMenuItem>
+              <DropdownMenuItem>Highest</DropdownMenuItem>
+              <DropdownMenuItem>Lowest</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100">
+              Filter by: All Transactions
+              <ChevronDown className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-36 rounded-md bg-white p-1 shadow-lg">
+              <DropdownMenuItem>All Transactions</DropdownMenuItem>
+              <DropdownMenuItem>Entertainment</DropdownMenuItem>
+              <DropdownMenuItem>Bills</DropdownMenuItem>
+              <DropdownMenuItem>Groceries</DropdownMenuItem>
+              <DropdownMenuItem>Dining Out</DropdownMenuItem>
+              <DropdownMenuItem>Transportation</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Transactions Table */}
@@ -92,9 +80,9 @@ export default function Transactions() {
               A list of your recent transactions.
             </TableCaption>
             <TableHeader>
-              <TableRow className="hidden md:table-row">
+              <TableRow>
                 <TableHead className="p-4 text-left text-gray-600">
-                  Recipient/Sender
+                  Recipient / Sender
                 </TableHead>
                 <TableHead className="p-4 text-left text-gray-600">
                   Category
@@ -108,52 +96,49 @@ export default function Transactions() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {/* Mobile View Row */}
-              <TableRow className="block w-full border-b md:table-row md:border-0">
-                {/* Name and Category */}
-                <TableCell className="block w-full px-4 py-2 text-gray-800 md:table-cell">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage asChild>
-                        <Image
-                          src="/images/avatars/bravo-zen-spa.jpg"
-                          alt="avatar"
-                          width={40}
-                          height={40}
-                        />
-                      </AvatarImage>
-                      <AvatarFallback>BZ</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium md:text-base">
-                        Bravo Zen Spa
-                      </span>
-                      {/* Only show category below the name on mobile */}
-                      <span className="text-sm text-gray-500 md:hidden">
-                        Personal Care
-                      </span>
-                    </div>
-                  </div>
+              {/* Table Row Example */}
+              <TableRow>
+                <TableCell className="flex items-center gap-4 p-4">
+                  <Avatar>
+                    <AvatarImage asChild>
+                      <Image
+                        src="/images/avatars/example-avatar.jpg"
+                        alt="Bravo Zen Spa"
+                        width={40}
+                        height={40}
+                      />
+                    </AvatarImage>
+                    <AvatarFallback>BZ</AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-gray-800">
+                    Bravo Zen Spa
+                  </span>
                 </TableCell>
-
-                {/* Category (Tablet/Desktop) */}
-                <TableCell className="hidden px-4 py-2 text-gray-600 md:table-cell">
+                <TableCell className="p-4 text-gray-600">
                   Personal Care
                 </TableCell>
-
-                {/* Amount and Date */}
-                <TableCell className="block w-full px-4 py-2 text-right text-gray-800 md:table-cell">
-                  <div className="flex flex-col items-end md:flex-row md:items-center md:justify-end md:gap-4">
-                    <span className="font-bold text-red-600">- $25.00</span>
-                    {/* Only show date below amount on mobile */}
-                    <span className="text-sm text-gray-500 md:w-auto md:text-right">
-                      29 Aug 2024
-                    </span>
-                  </div>
+                <TableCell className="p-4 text-gray-600">29 Aug 2024</TableCell>
+                <TableCell className="p-4 text-right font-bold text-red-600">
+                  - $25.00
                 </TableCell>
               </TableRow>
 
-              {/* Add more rows as needed */}
+              {/* Additional Rows */}
+              <TableRow>
+                <TableCell className="flex items-center gap-4 p-4">
+                  <Avatar>
+                    <AvatarFallback>GS</AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-gray-800">
+                    Grocery Store
+                  </span>
+                </TableCell>
+                <TableCell className="p-4 text-gray-600">Groceries</TableCell>
+                <TableCell className="p-4 text-gray-600">11 Aug 2024</TableCell>
+                <TableCell className="p-4 text-right font-bold text-green-600">
+                  + $200.00
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </div>
@@ -165,11 +150,15 @@ export default function Transactions() {
             Prev
           </Button>
           <div className="flex gap-2">
-            <Button variant="page" className="bg-gray-300 text-gray-700">
+            <Button variant="page" className="active:bg-black">
               1
             </Button>
-            <Button variant="page">2</Button>
-            <Button variant="page">3</Button>
+            <Button variant="page" className="active:bg-black">
+              2
+            </Button>
+            <Button variant="page" className="active:bg-black">
+              3
+            </Button>
           </div>
           <Button variant="page" className="flex items-center gap-2">
             Next
