@@ -5,7 +5,7 @@ export async function getAllUsers() {
   return users;
 }
 
-export async function getCreateUsers(email: string) {
-  const res = await sql`select * from user where email = ${email}`;
+export async function getCreateUsers() {
+  const res = await sql`select * from user `;
   return res;
 }

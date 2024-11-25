@@ -8,7 +8,7 @@ import { getCreateUsers } from "@/libs/db";
 export default async function OverviewPage() {
   const session = await auth();
 
-  const users = await getCreateUsers("abdulaziz.syed002@gmail.com");
+  const users = await getCreateUsers();
   console.log(users);
   if (!session?.user) {
     redirect("/login");
