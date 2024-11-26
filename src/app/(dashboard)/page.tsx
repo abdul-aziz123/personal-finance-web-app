@@ -8,11 +8,14 @@ import { getCreateUsers } from "@/libs/db";
 export default async function OverviewPage() {
   const session = await auth();
 
-  const users = await getCreateUsers();
-  console.log(users);
   if (!session?.user) {
     redirect("/login");
   }
+
+  const { user } = await getCreateUsers(session.user);
+  // const { user, isNew } = await getCreateUsers(session.user);
+
+  redirect("/register");
 
   return (
     <div className="flex flex-col gap-y-space250">
@@ -26,7 +29,7 @@ export default async function OverviewPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">$4,836.00</p>
+            <p className="text-2xl font-bold">{`$${user.current_balance.toFixed(2)}`}</p>
           </CardContent>
         </Card>
         <Card>

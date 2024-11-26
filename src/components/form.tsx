@@ -1,54 +1,43 @@
 import React from "react";
 
 type FormFieldProps = {
-  label: string;
+  id?: string;
+  label?: string;
   placeholder: string;
-  helperText: string;
+  helperText?: string;
   className?: string;
   type?: string;
-  IconComponent?: React.ReactNode;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function FormField({
+  id,
   label,
   placeholder,
   helperText,
-  type,
-  IconComponent,
+  type = "text",
+  value,
+  onChange,
 }: FormFieldProps) {
   return (
-    <div className="flex flex-col gap-space50">
-      <label className="text-text5_bold font-bold leading-[18px] text-Grey500">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="text-sm font-medium text-gray-600">
         {label}
       </label>
       <div className="relative">
         <input
+          id={id}
           type={type}
           placeholder={placeholder}
-          className="min-h-[45px] min-w-80 rounded-lg border border-Beige500 px-space250 py-space150 text-Grey900 placeholder:text-Beige500 hover:border-Grey500 hover:placeholder:text-Grey900 active:border-Grey900 active:placeholder:text-Grey900"
+          value={value}
+          onChange={onChange}
+          className="w-full rounded-md border border-gray-300 px-4 py-2 text-gray-700 placeholder-gray-400 focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
         />
-        {IconComponent && (
-          <span className="absolute right-5 top-[35%]">{IconComponent}</span>
-        )}
       </div>
       {helperText && (
-        <span className="self-end text-text5 text-Grey500">{helperText}</span>
+        <span className="text-sm text-gray-500">{helperText}</span>
       )}
     </div>
   );
-}
-
-// Usage
-
-{
-  /* <FormField
-        label="Basic Field"
-        placeholder="Placeholder"
-        helperText="Helper text"
-        IconComponent={
-          <span className="fill-Grey500 hover:fill-Grey900 active:fill-Grey900">
-            <IconCaretRight className="fill-current" />
-          </span>
-        }
-      /> */
 }

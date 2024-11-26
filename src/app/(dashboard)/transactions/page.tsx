@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+
+// UI Component Imports
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +18,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+
+// Icon Imports
 import { ChevronDown } from "lucide-react";
-import Button from "@/components/button";
 import { IconCaretLeft, IconCaretRight } from "@/icons";
+
+// Component Imports
+import Button from "@/components/button";
+import AddNewTransactionForm from "@/components/AddTransaction";
 
 export default function Transactions() {
   return (
@@ -29,9 +37,16 @@ export default function Transactions() {
           <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
             Transactions
           </h1>
-          <Button variant="primary" className="text-sm">
-            + Add New Transaction
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="primary" className="text-sm">
+                + Add New Transaction
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <AddNewTransactionForm />
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Filters */}
@@ -106,6 +121,7 @@ export default function Transactions() {
                         alt="Bravo Zen Spa"
                         width={40}
                         height={40}
+                        className="rounded-full"
                       />
                     </AvatarImage>
                     <AvatarFallback>BZ</AvatarFallback>
@@ -150,13 +166,13 @@ export default function Transactions() {
             Prev
           </Button>
           <div className="flex gap-2">
-            <Button variant="page" className="active:bg-black">
+            <Button variant="page" className="active:bg-gray-200">
               1
             </Button>
-            <Button variant="page" className="active:bg-black">
+            <Button variant="page" className="active:bg-gray-200">
               2
             </Button>
-            <Button variant="page" className="active:bg-black">
+            <Button variant="page" className="active:bg-gray-200">
               3
             </Button>
           </div>
