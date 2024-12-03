@@ -1,6 +1,31 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
+import Github from "next-auth/providers/github";
+import { Pool } from "@neondatabase/serverless";
+import PostgresAdapter from "@auth/pg-adapter";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google],
+export const { handlers, signIn, signOut, auth } = NextAuth(() => {
+  const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
+  return {
+    pages: {
+      signIn: "/login",
+      newUser: "/register",
+    },
+    providers: [Google, Github],
+    callbacks: {
+      authorized({ auth, request: { nextUrl } }) {
+        return !!auth?.user;
+        // const isLoggedIn = !!auth?.user;
+        // if (isLoggedIn) {
+        //   if (nextUrl.pathname == "/login") {
+        //     return Response.redirect(new URL("/", nextUrl));
+        //   } else {
+        //     return true;
+        //   }
+        // }
+        // return true;
+      },
+    },
+    adapter: PostgresAdapter(pool),
+  } satisfies NextAuthConfig;
 });
