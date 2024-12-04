@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 
-import { getColorHexCode } from "@/lib/utils";
-import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
+import { getColorHexCode } from "@/libs/utils";
+import { AddNewPotsFormSchema, addNewPotsSchema } from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
 import {

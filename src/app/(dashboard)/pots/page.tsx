@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import React from "react";
 
-import db from "@/libs/db";
+
 import { getColorHexCode } from "@/libs/utils";
 
 import { Button } from "@/components/ui/button";

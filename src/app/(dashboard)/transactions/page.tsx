@@ -5,14 +5,14 @@ import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
-import db from "@/libs/db";
+
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 import { columns } from "./columns";
 import { auth } from "@/auth";
-import AddnewTransaction from "@/modals/add-transaction";
+import AddnewTransaction from "@/modals/add_transaction";
 
 const DataTable = dynamic<{
   columns: ColumnDef<Transaction>[];

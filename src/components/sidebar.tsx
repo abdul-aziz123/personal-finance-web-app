@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import React, { useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 
 import {
   ArrowFatLinesLeft,

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 
-import db from "@/libs/db";
+
 import { getColorHexCode } from "@/libs/utils";
 
 import LogoutButton from "@/components/logout-button";

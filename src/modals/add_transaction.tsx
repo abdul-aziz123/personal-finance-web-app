@@ -5,12 +5,12 @@ import { format, formatISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import {
   AddNewTransactionFormSchema,
   Categories,
   addNewTransactionSchema,
-} from "@/lib/validations";
+} from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";

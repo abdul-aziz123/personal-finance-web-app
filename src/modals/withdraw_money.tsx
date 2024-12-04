@@ -6,8 +6,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { getColorHexCode } from "@/lib/utils";
-import { WithdrawFormSchema, withdrawSchema } from "@/lib/validations";
+import { getColorHexCode } from "@/libs/utils";
+import { WithdrawFormSchema, withdrawSchema } from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
 import {

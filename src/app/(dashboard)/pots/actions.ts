@@ -1,11 +1,10 @@
 "use server";
 
-// import { decrypt } from "@/lib/auth";
 import { Theme } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 import { updateBalance } from "@/libs/data";
-import db from "@/libs/db";
+
 import { AddNewPotsFormSchema, addNewPotsSchema } from "@/libs/validations";
 
 import { POSTS } from "./constants";

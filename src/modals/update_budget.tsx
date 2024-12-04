@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { getColorHexCode } from "@/lib/utils";
+import { getColorHexCode } from "@/libs/utils";
 import {
   AddNewBudgetSchema,
   Categories,
   addNewBudgetSchema,
-} from "@/lib/validations";
+} from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
 import {

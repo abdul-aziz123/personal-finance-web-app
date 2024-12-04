@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import db from "@/libs/db";
+
 import { AddNewBudgetSchema, addNewBudgetSchema } from "@/libs/validations";
 
 import { auth } from "@/auth";

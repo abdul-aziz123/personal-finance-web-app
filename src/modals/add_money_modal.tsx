@@ -5,8 +5,8 @@ import { Pot } from "@prisma/client";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { getColorHexCode } from "@/lib/utils";
-import { AddMoneyFormSchema, addMoneySchema } from "@/lib/validations";
+import { getColorHexCode } from "@/libs/utils";
+import { AddMoneyFormSchema, addMoneySchema } from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
 import {

@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 
-import { updateBalance } from "@/lib/data";
-import db from "@/lib/db";
-import { logoMapping } from "@/lib/utils";
+import { updateBalance } from "@/libs/data";
+
+import { logoMapping } from "@/libs/utils";
 import {
   AddNewTransactionFormSchema,
   addNewTransactionSchema,
-} from "@/lib/validations";
+} from "@/libs/validations";
 
 import { auth } from "@/auth";
 

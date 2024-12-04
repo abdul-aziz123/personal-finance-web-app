@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cva, VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
