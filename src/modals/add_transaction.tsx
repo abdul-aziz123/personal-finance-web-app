@@ -1,11 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format, formatISO } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-
-import { cn } from "@/libs/utils";
 import {
   AddNewTransactionFormSchema,
   Categories,
@@ -13,7 +9,6 @@ import {
 } from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calender";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DialogContent,
@@ -31,11 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import {
   Select,
   SelectContent,
@@ -89,6 +80,14 @@ export default function AddnewTransaction() {
     }
   }
 
+  const getTodayDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
+  };
+
   return (
     <DialogContent className="w-full">
       <DialogHeader className="w-full">
@@ -132,41 +131,9 @@ export default function AddnewTransaction() {
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Transaction Date</FormLabel>
-                        <Popover modal={true}>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"secondary"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground",
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={
-                                field.value ? new Date(field.value) : undefined
-                              }
-                              onSelect={(date) =>
-                                field.onChange(date ? formatISO(date) : "")
-                              }
-                              disabled={(date: Date) =>
-                                date > new Date(new Date().setHours(0, 0, 0, 0))
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <FormControl>
+                          <Input type="date" max={getTodayDate()} {...field} />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

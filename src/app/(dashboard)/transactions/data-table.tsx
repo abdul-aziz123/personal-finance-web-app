@@ -43,6 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Categories } from "@/libs/validations";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -151,11 +152,16 @@ export function DataTable<TData, TValue>({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Transactions</SelectItem>
-                  <SelectItem value="Entertainment">Entertainment</SelectItem>
+                  {Categories.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                  {/* <SelectItem value="Entertainment">Entertainment</SelectItem>
                   <SelectItem value="Bill">Bill</SelectItem>
                   <SelectItem value="Groceries">Groceries</SelectItem>
                   <SelectItem value="Dining Out">Dining Out</SelectItem>
-                  <SelectItem value="Transportation">Transportation</SelectItem>
+                  <SelectItem value="Transportation">Transportation</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>

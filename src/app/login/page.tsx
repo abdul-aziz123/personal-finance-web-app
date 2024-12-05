@@ -25,7 +25,7 @@ export default async function LoginPage() {
       </div>
 
       {/* Login form section */}
-      <div className="bg-Beige100 flex flex-1 items-center justify-center p-4 sm:p-8 lg:w-1/2">
+      <div className="flex flex-1 items-center justify-center bg-beige-100 p-4 sm:p-8 lg:w-1/2">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-bold tracking-tight">
