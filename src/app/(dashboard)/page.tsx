@@ -18,6 +18,7 @@ import { CaretRight, JarLight } from "@/components/ui/icons";
 import Chart from "./chart";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
+import { RecurringBill } from "./recurring-bills/page";
 
 interface ChartData {
   id: number;
@@ -137,7 +138,7 @@ export default async function Dashboard() {
         </div>
 
         <div className="mb-4 break-inside-avoid">
-          <RecurringBills transactions={transactions} />
+          <RecurringBills />
         </div>
       </div>
     </div>
@@ -352,28 +353,51 @@ function Transactions({ transactions }: { transactions: Transaction[] }) {
     </div>
   );
 }
-function RecurringBills({ transactions }: { transactions: Transaction[] }) {
-  const recurringData = transactions.filter(
-    (transaction) => transaction.recurring && transaction.amount < 0,
+async function RecurringBills() {
+  const { rows: distinctRecurringBills } = await sql<{
+    name: string;
+  }>`SELECT DISTINCT name FROM transactions
+    WHERE amount < 0 AND recurring = true`;
+
+  const recurringBills: RecurringBill[] = await Promise.all(
+    distinctRecurringBills.map(async (bill: { name: string }) => {
+      const res =
+        await sql<Transaction>`SELECT * FROM transactions WHERE name = ${bill.name} AND amount < 0 AND recurring = true ORDER BY date DESC LIMIT 1`;
+      const latestTransaction = res.rows[0];
+      const today = new Date();
+      const transactionDate = new Date(latestTransaction.date);
+      let status: "due" | "paid" | "upcoming" = "upcoming";
+      if (
+        transactionDate.getUTCMonth() < today.getUTCMonth() &&
+        transactionDate.getDate() < today.getDate()
+      ) {
+        status = "due";
+      } else if (
+        transactionDate.getUTCMonth() == today.getUTCMonth() &&
+        transactionDate.getDate() <= today.getDate()
+      ) {
+        status = "paid";
+      }
+      return {
+        ...latestTransaction,
+        status,
+      };
+    }),
   );
 
-  const paidBills = recurringData.filter(
-    (transaction) => new Date(transaction.date) < new Date(),
+  const dueSoonBills = recurringBills.filter(
+    (transaction) => transaction.status == "due",
   );
 
-  const upcomingBills = recurringData.filter(
-    (transaction) => new Date(transaction.date) >= new Date(),
+  const paidBills = recurringBills.filter(
+    (transaction) => transaction.status == "paid",
   );
 
-  const dueSoonBills = recurringData.filter((transaction) => {
-    const today = new Date();
-    const dueDate = new Date(transaction.date);
-    const diffInDays =
-      (dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return diffInDays <= 3 && diffInDays >= 0;
-  });
+  const upcomingBills = recurringBills.filter(
+    (transaction) => transaction.status == "upcoming",
+  );
 
-  // const totalBillsAmount = recurringData.reduce(
+  // const totalBillsAmount = recurringBills.reduce(
   //   (acc, transaction) => acc + Math.abs(transaction.amount),
   //   0,
   // );
