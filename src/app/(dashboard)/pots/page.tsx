@@ -1,8 +1,7 @@
-import { Pot } from "@prisma/client";
+import { Pot } from "@/libs/definitions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import React from "react";
-
 
 import { getColorHexCode } from "@/libs/utils";
 
@@ -22,6 +21,7 @@ import AddNewPot from "@/modals/add_new_pot";
 import DeletePotModal from "@/modals/delete_pot";
 import UpdatePotModal from "@/modals/update_pot_modal";
 import WithdrawMoney from "@/modals/withdraw_money";
+import { sql } from "@vercel/postgres";
 
 export const metadata: Metadata = {
   title: "Pots",
@@ -35,14 +35,16 @@ export default async function PotsPage() {
   }
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     redirect("/login");
   }
 
-  const POTS = await db.pot.findMany({
-    where: { userId: userId },
-    orderBy: { name: "asc" },
-  });
+  // const POTS = await db.pot.findMany({
+  //   where: { userId: userId },
+  //   orderBy: { name: "asc" },
+  // });
+  const { rows: POTS } =
+    await sql<Pot>`SELECT * FROM pots WHERE "userId" = ${userId} ORDER BY name ASC`;
 
   return (
     <div className="container flex flex-col gap-8">
@@ -59,7 +61,7 @@ export default async function PotsPage() {
         {POTS.length > 0 ? (
           POTS.map((pot: Pot, idx) => <PotCard pot={pot} key={idx} />)
         ) : (
-          <p className="text-preset-4 text-grey-300 text-start">
+          <p className="text-preset-4 text-start text-grey-300">
             You don&apos;t have a pot account yet.
           </p>
         )}
@@ -105,7 +107,7 @@ function PotCard({ pot }: { pot: Pot }) {
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="text-secondary-red border-none bg-transparent"
+                    className="border-none bg-transparent text-secondary-red"
                   >
                     Delete Pot
                   </Button>

@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import SocialLogins from "@/components/SocialLogins";
-import IllustrationAuthentication from "../../../public/assets/images/illustration-authentication.svg";
+import IllustrationAuthentication from "../../../public/illustration-authentication.svg";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+  if (session?.user) {
+    redirect("/");
+  }
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* Image section - only visible on large screens */}
@@ -20,7 +26,7 @@ export default function LoginPage() {
       </div>
 
       {/* Login form section */}
-      <div className="flex flex-1 items-center justify-center bg-Beige100 p-4 sm:p-8 lg:w-1/2">
+      <div className="bg-Beige100 flex flex-1 items-center justify-center p-4 sm:p-8 lg:w-1/2">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-bold tracking-tight">
@@ -31,22 +37,12 @@ export default function LoginPage() {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-Grey100" />
+                <div className="border-Grey100 w-full border-t" />
               </div>
             </div>
 
             <SocialLogins />
           </div>
-
-          <p className="text-muted-foreground mt-2 text-center text-sm">
-            Don't have an account?{" "}
-            <Link
-              href="/register"
-              className="text-primary hover:text-primary/80 font-semibold"
-            >
-              Register to create your account
-            </Link>
-          </p>
         </div>
       </div>
     </div>

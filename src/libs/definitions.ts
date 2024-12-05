@@ -1,31 +1,47 @@
-export type UserTable = {
+export type Theme = 'GREEN' | 'YELLOW' | 'CYAN' | 'NAVY' | 'RED' | 'PURPLE' | 'TURQUOISE' | 'BROWN' | 'MAGENTA' | 'BLUE' | 'GREY' | 'ARMY' | 'PINK' | 'YELLOWGREEN' | 'ORANGE';
+
+export type Category = 'Entertainment' | 'Bills' | 'Groceries' | 'DiningOut' | 'Transportation' | 'PersonalCare' | 'Education' | 'Lifestyle' | 'Shopping' | 'General';
+
+export type User = {
   id: number;
   name: string;
   email: string;
-  emaiLVerified: string | null;
-  image: string | null;
-};
+  emailVerified: string | null | undefined;
+  image: string | null | undefined;
+}
 
-export type PasswordTable = {
+export type Balance = {
   id: number;
-  userId: number;
-  passwordHash: string;
-};
-
-export type BalancesTable = {
-  id: number;
-  userId: number;
-  current_balance: number;
-  main_income: number;
-  side_income: number;
+  current: number;
+  income: number;
   expenses: number;
-};
-
-export type PotsTable = {
-  id: number;
   userId: number;
-  pot_name: string;
-  target_amount: number;
-  current_amount: number;
+}
+
+export type Pot = {
+  id: number;
+  name: string;
+  target: number;
+  total: number;
+  theme: Theme;
+  userId: number;
+}
+
+export type Transaction = {
+  id: number;
+  avatar: string;
+  name: string;
+  amount: number;
+  Category: Category;
+  date: string;
+  recurring: boolean;
+  userId: number;
+}
+
+export type Budget = {
+  id: number;
+  amount: number;
+  category: string;
   theme: string;
-};
+  userId: number;
+}

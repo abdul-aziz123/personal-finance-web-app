@@ -2,16 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 
-
 import { AddNewBudgetSchema, addNewBudgetSchema } from "@/libs/validations";
 
 import { auth } from "@/auth";
+import { sql } from "@vercel/postgres";
 
 export const addBudget = async (values: AddNewBudgetSchema) => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
@@ -22,14 +22,18 @@ export const addBudget = async (values: AddNewBudgetSchema) => {
   }
 
   try {
-    await db.budget.create({
-      data: {
-        amount: values.maximumSpend,
-        category: values.categories,
-        theme: values.theme,
-        userId,
-      },
-    });
+    await sql`
+      INSERT INTO budgets (amount, category, theme, "userId")
+      VALUES (${values.maximumSpend}, ${values.categories}, ${values.theme}, ${userId})
+    `;
+    // await db.budget.create({
+    //   data: {
+    //     amount: values.maximumSpend,
+    //     category: values.categories,
+    //     theme: values.theme,
+    //     userId,
+    //   },
+    // });
 
     revalidatePath("/", "layout");
     return {
@@ -45,16 +49,17 @@ export const deleteBudget = async (id: string | number) => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   try {
-    await db.budget.delete({
-      where: {
-        id: Number(id),
-      },
-    });
+    await sql`DELETE FROM budgets WHERE id = ${Number(id)}`;
+    // await db.budget.delete({
+    //   where: {
+    //     id: Number(id),
+    //   },
+    // });
 
     revalidatePath("/", "layout");
     return {
@@ -73,7 +78,7 @@ export const editBudget = async (
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
@@ -84,17 +89,22 @@ export const editBudget = async (
   }
 
   try {
-    await db.budget.update({
-      where: {
-        id: Number(id),
-        userId: userId,
-      },
-      data: {
-        amount: values.maximumSpend,
-        category: values.categories,
-        theme: values.theme,
-      },
-    });
+    await sql`
+      UPDATE budgets
+      SET amount = ${values.maximumSpend}, category = ${values.categories}, theme = ${values.theme}
+      WHERE id = ${Number(id)} AND "userId" = ${userId}
+    `;
+    // await db.budget.update({
+    //   where: {
+    //     id: Number(id),
+    //     userId: userId,
+    //   },
+    //   data: {
+    //     amount: values.maximumSpend,
+    //     category: values.categories,
+    //     theme: values.theme,
+    //   },
+    // });
 
     revalidatePath("/", "layout");
     return {

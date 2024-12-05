@@ -1,10 +1,14 @@
-import { Balance as BalancePrisma, Pot, Transaction } from "@prisma/client";
+import {
+  Balance as BalanceDB,
+  Budget,
+  Pot,
+  Transaction,
+} from "@/libs/definitions";
 import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
-
 
 import { getColorHexCode } from "@/libs/utils";
 
@@ -13,49 +17,66 @@ import { CaretRight, JarLight } from "@/components/ui/icons";
 
 import Chart from "./chart";
 import { auth } from "@/auth";
+import { sql } from "@vercel/postgres";
 
 export default async function Dashboard() {
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
   }
+
   const userId = session?.user?.id;
 
   if (!userId) redirect("/login");
 
-  let currentBalance: BalancePrisma | null;
-  currentBalance = await db.balance.findFirst({
-    where: {
-      userId: userId,
-    },
-  });
-  if (!currentBalance) {
-    currentBalance = await db.balance.create({
-      data: {
-        userId: userId,
-        current: 0,
-        income: 0,
-        expenses: 0,
-      },
-    });
+  let currentBalance: BalanceDB;
+  const { rows } =
+    await sql<BalanceDB>`SELECT * FROM balances WHERE "userId" = ${userId} LIMIT 1`;
+  // currentBalance = await db.balance.findFirst({
+  //   where: {
+  //     userId: userId,
+  //   },
+  // });
+  if (rows.length == 0) {
+    const { rows } = await sql<BalanceDB>`
+      INSERT INTO balances 
+      ("userId", current, income, expenses)
+      VALUES (${userId}, 0, 0, 0) RETURNING *
+    `;
+    currentBalance = rows[0];
+    // currentBalance = await db.balance.create({
+    //   data: {
+    //     userId: userId,
+    //     current: 0,
+    //     income: 0,
+    //     expenses: 0,
+    //   },
+    // });
   }
+  currentBalance = rows[0];
 
-  const budgets = await db.budget.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-  const transactions = await db.transaction.findMany({
-    where: {
-      userId: userId,
-    },
-  });
+  const { rows: budgets } =
+    await sql<Budget>`SELECT * FROM budgets WHERE "userId" = ${userId}`;
 
-  const pots = await db.pot.findMany({
-    where: {
-      userId: userId,
-    },
-  });
+  // const budgets = await db.budget.findMany({
+  //   where: {
+  //     userId: userId,
+  //   },
+  // });
+  const { rows: transactions } =
+    await sql<Transaction>`SELECT * FROM transactions WHERE "userId" = ${userId}`;
+  // const transactions = await db.transaction.findMany({
+  //   where: {
+  //     userId: userId,
+  //   },
+  // });
+  const { rows: pots } =
+    await sql<Pot>`SELECT * FROM pots WHERE "userId" = ${userId}`;
+  // const pots = await db.pot.findMany({
+  //   where: {
+  //     userId: userId,
+  //   },
+  // });
 
   const chartData = budgets.map((budget) => {
     const categoryTransactions = transactions.filter((transaction) => {
@@ -118,7 +139,7 @@ function Balance({
   balance,
 }: {
   transactions: Transaction[];
-  balance: BalancePrisma;
+  balance: BalanceDB;
 }) {
   // filter transactions of this current month
   const currentMonthExpenses = transactions
@@ -134,7 +155,7 @@ function Balance({
     .reduce((acc, transaction) => acc + Math.abs(transaction.amount), 0);
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6">
-      <div className="bg-grey-900 w-full rounded-lg p-5 md:p-6">
+      <div className="w-full rounded-lg bg-grey-900 p-5 md:p-6">
         <div className="flex flex-col gap-3">
           <p className="text-preset-4 font-normal text-white">
             Current Balance
@@ -146,16 +167,16 @@ function Balance({
       </div>
       <div className="w-full rounded-lg bg-white p-5 md:p-6">
         <div className="flex flex-col gap-3">
-          <p className="text-preset-4 text-grey-500 font-normal">Income</p>
-          <h4 className="text-preset-1 text-grey-900 font-bold">
+          <p className="text-preset-4 font-normal text-grey-500">Income</p>
+          <h4 className="text-preset-1 font-bold text-grey-900">
             ${balance.income.toFixed(2)}
           </h4>
         </div>
       </div>
       <div className="w-full rounded-lg bg-white p-5 md:p-6">
         <div className="flex flex-col gap-3">
-          <p className="text-preset-4 text-grey-500 font-normal">Expenses</p>
-          <h4 className="text-preset-1 text-grey-900 font-bold">
+          <p className="text-preset-4 font-normal text-grey-500">Expenses</p>
+          <h4 className="text-preset-1 font-bold text-grey-900">
             ${currentMonthExpenses.toFixed(2)}
           </h4>
         </div>
@@ -174,22 +195,22 @@ function Pots({ pots }: { pots: Pot[] }) {
     <div className="w-full break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-preset-2 text-grey-900 font-bold">Pots</h3>
+          <h3 className="text-preset-2 font-bold text-grey-900">Pots</h3>
           <Link
             href={"/pots"}
-            className="text-grey-500 inline-flex items-center gap-3"
+            className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
             <CaretRight />
           </Link>
         </div>
         <div className="flex flex-col gap-5 md:flex-row">
-          <div className="bg-beige-100 rounded-lg p-4 md:flex-1">
+          <div className="rounded-lg bg-beige-100 p-4 md:flex-1">
             <div className="flex items-center gap-4">
-              <JarLight className="text-secondary-green fill-transparent" />
+              <JarLight className="fill-transparent text-secondary-green" />
               <div className="flex flex-col gap-[11px]">
-                <p className="text-preset-4 text-grey-500 font-normal">Pots</p>
-                <p className="text-preset-1 text-grey-900 font-bold">
+                <p className="text-preset-4 font-normal text-grey-500">Pots</p>
+                <p className="text-preset-1 font-bold text-grey-900">
                   ${totalSaved}
                 </p>
               </div>
@@ -200,10 +221,10 @@ function Pots({ pots }: { pots: Pot[] }) {
               <div key={pot.id} className="relative w-[49%] pl-5">
                 <span className="absolute bottom-0 left-0 top-0 h-full w-1 rounded-[8px] bg-red-800" />
                 <div className="flex flex-col gap-1">
-                  <p className="text-preset-5 text-grey-500 line-clamp-1 font-normal">
+                  <p className="text-preset-5 line-clamp-1 font-normal text-grey-500">
                     {pot.name}
                   </p>
-                  <p className="text-preset-4 text-grey-900 font-bold">
+                  <p className="text-preset-4 font-bold text-grey-900">
                     ${pot.total}
                   </p>
                 </div>
@@ -222,10 +243,10 @@ function Budgets({ chartData }: { chartData: any }) {
     <div className="min-h-[358px] w-full break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-preset-2 text-grey-900 font-bold">Budgets</h3>
+          <h3 className="text-preset-2 font-bold text-grey-900">Budgets</h3>
           <Link
             href={"/budgets"}
-            className="text-grey-500 inline-flex items-center gap-3"
+            className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
             <CaretRight />
@@ -248,10 +269,10 @@ function Budgets({ chartData }: { chartData: any }) {
                   style={{ backgroundColor: item.fill }}
                 />
 
-                <h4 className="text-preset-4 text-grey-500 truncate font-normal">
+                <h4 className="text-preset-4 truncate font-normal text-grey-500">
                   {item.category}
                 </h4>
-                <p className="text-preset-5 text-grey-900 font-bold">
+                <p className="text-preset-5 font-bold text-grey-900">
                   ${Math.abs(item.totalSpent)?.toFixed(2) ?? "N/A"}
                 </p>
               </div>
@@ -268,12 +289,12 @@ function Transactions({ transactions }: { transactions: Transaction[] }) {
     <div className="min-h-[200px] break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-preset-2 text-grey-900 font-bold">
+          <h3 className="text-preset-2 font-bold text-grey-900">
             Transactions
           </h3>
           <Link
             href={"/transactions"}
-            className="text-grey-500 inline-flex items-center gap-3"
+            className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
             <CaretRight />
@@ -283,7 +304,7 @@ function Transactions({ transactions }: { transactions: Transaction[] }) {
           slicedTransactions.map((transaction) => (
             <div
               key={transaction.id}
-              className="border-grey-100 flex justify-between border-b pb-5"
+              className="flex justify-between border-b border-grey-100 pb-5"
             >
               <div className="flex items-center gap-4">
                 <span className="relative h-10 w-10 overflow-hidden rounded-full">
@@ -294,7 +315,7 @@ function Transactions({ transactions }: { transactions: Transaction[] }) {
                     unoptimized
                   />
                 </span>
-                <h4 className="text-preset-4 text-grey-900 font-bold capitalize">
+                <h4 className="text-preset-4 font-bold capitalize text-grey-900">
                   {transaction.name}
                 </h4>
               </div>
@@ -308,7 +329,7 @@ function Transactions({ transactions }: { transactions: Transaction[] }) {
                   {transaction.amount < 0 ? "-" : "+"}$
                   {Math.abs(transaction.amount).toFixed(2)}
                 </p>
-                <p className="text-preset-5 text-grey-500 font-normal">
+                <p className="text-preset-5 font-normal text-grey-500">
                   {format(new Date(transaction.date), "dd MMM yyyy")}
                 </p>
               </div>
@@ -366,12 +387,12 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
     <div className="break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-preset-2 text-grey-900 font-bold">
+          <h3 className="text-preset-2 font-bold text-grey-900">
             Recurring Bills
           </h3>
           <Link
             href={"/recurring-bills"}
-            className="text-grey-500 inline-flex items-center gap-3"
+            className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
             <CaretRight />
@@ -379,33 +400,33 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
         </div>
         <div className="flex flex-col gap-3">
           <div
-            className="bg-beige-100 relative w-full rounded-[8px] px-4 py-5"
+            className="relative w-full rounded-[8px] bg-beige-100 px-4 py-5"
             style={{
               borderLeftWidth: "4px",
               borderColor: "#277C78",
             }}
           >
             <div className="flex items-center justify-between">
-              <p className="text-preset-4 text-grey-500 font-normal">
+              <p className="text-preset-4 font-normal text-grey-500">
                 Paid Bills
               </p>
-              <p className="text-preset-4 text-grey-900 font-bold">{`$${paidBillsTotal.toFixed(2)}`}</p>
+              <p className="text-preset-4 font-bold text-grey-900">{`$${paidBillsTotal.toFixed(2)}`}</p>
             </div>
           </div>
         </div>
         <div className="flex flex-col gap-3">
           <div
-            className="bg-beige-100 relative w-full rounded-[8px] px-4 py-5"
+            className="relative w-full rounded-[8px] bg-beige-100 px-4 py-5"
             style={{
               borderLeftWidth: "4px",
               borderColor: "#F2CDAC",
             }}
           >
             <div className="flex items-center justify-between">
-              <p className="text-preset-4 text-grey-500 font-normal">
+              <p className="text-preset-4 font-normal text-grey-500">
                 Total Upcoming
               </p>
-              <p className="text-preset-4 text-grey-900 font-bold">
+              <p className="text-preset-4 font-bold text-grey-900">
                 {`$${upcomingBillsTotal.toFixed(2)}`}
               </p>
             </div>
@@ -413,17 +434,17 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
         </div>
         <div className="flex flex-col gap-3">
           <div
-            className="bg-beige-100 relative w-full rounded-[8px] px-4 py-5"
+            className="relative w-full rounded-[8px] bg-beige-100 px-4 py-5"
             style={{
               borderLeftWidth: "4px",
               borderColor: "#82C9D7",
             }}
           >
             <div className="flex items-center justify-between">
-              <p className="text-preset-4 text-grey-500 font-normal">
+              <p className="text-preset-4 font-normal text-grey-500">
                 Due Soon
               </p>
-              <p className="text-preset-4 text-grey-900 font-bold">{`$${dueSoonTotal.toFixed(2)}`}</p>
+              <p className="text-preset-4 font-bold text-grey-900">{`$${dueSoonTotal.toFixed(2)}`}</p>
             </div>
           </div>
         </div>

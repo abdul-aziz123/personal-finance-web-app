@@ -1,5 +1,5 @@
 import React from "react";
-import { TabsDemo } from "@/components/starting";
+// import { TabsDemo } from "@/components/starting";
 import Image from "next/image";
 import IllustrationAuthentication from "../../../public/assets/images/illustration-authentication.svg";
 
@@ -16,7 +16,7 @@ export default function page() {
           priority
         />
       </div>
-      <div className="flex flex-1 items-center justify-center bg-Beige100 p-4 sm:p-8 lg:w-1/2">
+      <div className="bg-Beige100 flex flex-1 items-center justify-center p-4 sm:p-8 lg:w-1/2">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-bold tracking-tight">
@@ -26,11 +26,11 @@ export default function page() {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-Grey100" />
+                <div className="border-Grey100 w-full border-t" />
               </div>
             </div>
 
-            <TabsDemo />
+            {/* <TabsDemo /> */}
           </div>
         </div>
       </div>

@@ -1,11 +1,9 @@
-import { Transaction } from "@prisma/client";
+import { Transaction } from "@/libs/definitions";
 import { ColumnDef } from "@tanstack/react-table";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
-
-
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -13,6 +11,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { columns } from "./columns";
 import { auth } from "@/auth";
 import AddnewTransaction from "@/modals/add_transaction";
+import { sql } from "@vercel/postgres";
 
 const DataTable = dynamic<{
   columns: ColumnDef<Transaction>[];
@@ -30,15 +29,17 @@ export default async function TransactionsPage() {
     redirect("/login");
   }
   const userId = session?.user?.id;
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     redirect("/login");
   }
 
-  const data = await db.transaction.findMany({
-    where: {
-      userId,
-    },
-  });
+  const { rows: data } =
+    await sql<Transaction>`SELECT * FROM transactions WHERE "userId" = ${userId}`;
+  // const data = await db.transaction.findMany({
+  //   where: {
+  //     userId,
+  //   },
+  // });
 
   return (
     <div className="container flex flex-col gap-8">

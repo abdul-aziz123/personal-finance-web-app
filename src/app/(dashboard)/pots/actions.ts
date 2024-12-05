@@ -1,6 +1,6 @@
 "use server";
 
-import { Theme } from "@prisma/client";
+import { Balance, Pot, Theme } from "@/libs/definitions";
 import { revalidatePath } from "next/cache";
 
 import { updateBalance } from "@/libs/data";
@@ -9,6 +9,7 @@ import { AddNewPotsFormSchema, addNewPotsSchema } from "@/libs/validations";
 
 import { POSTS } from "./constants";
 import { auth } from "@/auth";
+import { sql } from "@vercel/postgres";
 
 export const addPot = async ({
   name,
@@ -22,19 +23,21 @@ export const addPot = async ({
   // check if the token is valid
   const session = await auth();
   const userId = session?.user?.id;
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   // Check if the user already has a pot with the same theme
-  const existingPot = await db.pot.findFirst({
-    where: {
-      userId,
-      theme: theme.toUpperCase() as Theme,
-    },
-  });
+  const { rows } =
+    await sql<Pot>`SELECT * FROM pots WHERE "userId" = ${userId} AND theme = ${theme}`;
+  // const existingPot = await db.pot.findFirst({
+  //   where: {
+  //     userId,
+  //     theme: theme.toUpperCase() as Theme,
+  //   },
+  // });
 
-  if (existingPot) {
+  if (rows.length > 0) {
     return {
       success: false,
       message: `You already have a pot with the theme ${theme}. Please choose another theme.`,
@@ -48,15 +51,16 @@ export const addPot = async ({
   }
 
   try {
-    await db.pot.create({
-      data: {
-        name,
-        target,
-        theme: theme.toUpperCase() as Theme,
-        total: 0,
-        userId,
-      },
-    });
+    await sql`INSERT INTO pots (name, target, theme, total, "userId") VALUES (${name}, ${target}, ${theme}, 0, ${userId})`;
+    // await db.pot.create({
+    //   data: {
+    //     name,
+    //     target,
+    //     theme: theme.toUpperCase() as Theme,
+    //     total: 0,
+    //     userId,
+    //   },
+    // });
     revalidatePath("/", "layout");
     return { success: true, message: "Pot added successfully" };
   } catch (error) {
@@ -69,16 +73,17 @@ export const getThemesForBudget = async () => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token", data: [] };
   }
+  const { rows: userBudgets } =
+    await sql`SELECT theme FROM budgets WHERE "userId" = ${userId}`;
+  // const userBudgets = await db.budget.findMany({
+  //   where: { userId },
+  //   select: { theme: true },
+  // });
 
-  const userBudgets = await db.budget.findMany({
-    where: { userId },
-    select: { theme: true },
-  });
-
-  const usedThemes = userBudgets.map((pot) => pot.theme);
+  const usedThemes = userBudgets.map((budget) => budget.theme);
 
   const themesWithUsage = POSTS.map((post) => ({
     name: post.name,
@@ -93,14 +98,16 @@ export const getThemesForPot = async () => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token", data: [] };
   }
 
-  const userPots = await db.pot.findMany({
-    where: { userId },
-    select: { theme: true },
-  });
+  const { rows: userPots } =
+    await sql`SELECT theme FROM pots WHERE "userId" = ${userId}`;
+  // const userPots = await db.pot.findMany({
+  //   where: { userId },
+  //   select: { theme: true },
+  // });
 
   const usedThemes = userPots.map((pot) => pot.theme);
 
@@ -116,25 +123,28 @@ export const deletePot = async (potId: number) => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   try {
-    const res = await db.pot.findFirst({
-      where: {
-        id: potId,
-      },
-    });
-    if (res === null) {
+    const { rows } =
+      await sql<Pot>`SELECT * FROM pots WHERE id = ${potId} LIMIT 1`;
+    // const res = await db.pot.findFirst({
+    //   where: {
+    //     id: potId,
+    //   },
+    // });
+    if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
     }
-    await db.pot.delete({
-      where: {
-        id: potId,
-      },
-    });
-    await updateBalance(userId, res.total);
+    await sql`DELETE FROM pots WHERE id = ${potId}`;
+    // await db.pot.delete({
+    //   where: {
+    //     id: potId,
+    //   },
+    // });
+    await updateBalance(Number(userId), rows[0].total);
     revalidatePath("/", "layout");
     return { success: true, message: "Pot deleted successfully" };
   } catch (error) {
@@ -146,25 +156,31 @@ export const updatePot = async (id: number, values: AddNewPotsFormSchema) => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   try {
-    const updatedPot = await db.pot.update({
-      where: { id },
-      data: {
-        name: values.potName,
-        target: values.target,
-        theme: values.theme,
-      },
-    });
+    const { rows } = await sql<Pot>`
+      UPDATE pots
+      SET name = ${values.potName}, target = ${values.target}, theme = ${values.theme}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    // const updatedPot = await db.pot.update({
+    //   where: { id },
+    //   data: {
+    //     name: values.potName,
+    //     target: values.target,
+    //     theme: values.theme,
+    //   },
+    // });
 
     revalidatePath("/", "layout");
     return {
       success: true,
       message: "Pot updated successfully",
-      data: updatedPot,
+      data: rows[0],
     };
   } catch (error) {
     console.error("Error updating pot:", error);
@@ -174,35 +190,41 @@ export const updatePot = async (id: number, values: AddNewPotsFormSchema) => {
 export const withdrawMoney = async (potId: number, amount: number) => {
   const session = await auth();
   const userId = session?.user?.id;
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   try {
-    const pot = await db.pot.findFirst({
-      where: {
-        id: potId,
-        userId,
-      },
-    });
+    const { rows } =
+      await sql<Pot>`SELECT * FROM pots WHERE id = ${potId} AND "userId" = ${userId} LIMIT 1`;
+    // const pot = await db.pot.findFirst({
+    //   where: {
+    //     id: potId,
+    //     userId,
+    //   },
+    // });
 
-    if (!pot) {
+    if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
     }
 
-    if (pot.total < amount) {
+    if (rows[0].total < amount) {
       return { success: false, message: "Insufficient funds" };
     }
-
-    await db.pot.update({
-      where: { id: potId },
-      data: {
-        total: {
-          decrement: amount,
-        },
-      },
-    });
-    await updateBalance(userId, amount);
+    await sql`
+      UPDATE pots
+      SET total = ${rows[0].total - amount}
+      WHERE id = ${potId}
+    `;
+    // await db.pot.update({
+    //   where: { id: potId },
+    //   data: {
+    //     total: {
+    //       decrement: amount,
+    //     },
+    //   },
+    // });
+    await updateBalance(Number(userId), amount);
 
     revalidatePath("/", "layout");
     return { success: true, message: "Money withdrawn successfully" };
@@ -214,49 +236,56 @@ export const withdrawMoney = async (potId: number, amount: number) => {
 export const addMoney = async (potId: number, amount: number) => {
   const session = await auth();
   const userId = session?.user?.id;
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   try {
-    const pot = await db.pot.findFirst({
-      where: {
-        id: potId,
-        userId,
-      },
-    });
+    const { rows } =
+      await sql<Pot>`SELECT * FROM pots WHERE id = ${potId} AND "userId" = ${userId} LIMIT 1`;
+    // const pot = await db.pot.findFirst({
+    //   where: {
+    //     id: potId,
+    //     userId,
+    //   },
+    // });
 
-    if (!pot) {
+    if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
     }
-    if (pot.total + amount > pot.target) {
+    if (rows[0].total + amount > rows[0].target) {
       return {
         success: false,
-        message: `Amount exceeds the target of ${pot.target}`,
+        message: `Amount exceeds the target of ${rows[0].target}`,
       };
     }
-
-    const balance = await db.balance.findFirst({
-      where: {
-        userId,
-      },
-    });
-    if (!balance) {
+    const { rows: balances } =
+      await sql<Balance>`SELECT * FROM balances WHERE "userId" = ${userId} LIMIT 1`;
+    // const balance = await db.balance.findFirst({
+    //   where: {
+    //     userId,
+    //   },
+    // });
+    if (balances.length == 0) {
       return { success: false, message: "Balance not found" };
     }
-    if (amount > balance.current) {
+    if (amount > balances[0].current) {
       return { success: false, message: "Insufficient funds" };
     }
-
-    await db.pot.update({
-      where: { id: potId },
-      data: {
-        total: {
-          increment: amount,
-        },
-      },
-    });
-    await updateBalance(userId, -amount);
+    await sql`
+      UPDATE pots
+      SET total = ${rows[0].total + amount}
+      WHERE id = ${potId}
+    `;
+    // await db.pot.update({
+    //   where: { id: potId },
+    //   data: {
+    //     total: {
+    //       increment: amount,
+    //     },
+    //   },
+    // });
+    await updateBalance(Number(userId), -amount);
 
     revalidatePath("/", "layout");
 
@@ -269,22 +298,24 @@ export const addMoney = async (potId: number, amount: number) => {
 export const getPot = async (id: number) => {
   const session = await auth();
   const userId = session?.user?.id;
-  if (!userId || typeof userId !== "string") {
+  if (!userId) {
     return { success: false, message: "Invalid token" };
   }
 
   try {
-    const pot = await db.pot.findFirst({
-      where: {
-        id,
-      },
-    });
+    const { rows } =
+      await sql<Pot>`SELECT * FROM pots WHERE id = ${id} AND "userId" = ${userId} LIMIT 1`;
+    // const pot = await db.pot.findFirst({
+    //   where: {
+    //     id,
+    //   },
+    // });
 
-    if (!pot) {
+    if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
     }
 
-    return { success: true, message: "pot found", data: pot };
+    return { success: true, message: "pot found", data: rows[0] };
   } catch (error) {
     console.error("Error getting pot:", error);
     return { success: false, message: "Error getting pot" };

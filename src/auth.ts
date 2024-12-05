@@ -12,20 +12,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(() => {
       newUser: "/register",
     },
     providers: [Google, Github],
-    callbacks: {
-      authorized({ auth, request: { nextUrl } }) {
-        return !!auth?.user;
-        // const isLoggedIn = !!auth?.user;
-        // if (isLoggedIn) {
-        //   if (nextUrl.pathname == "/login") {
-        //     return Response.redirect(new URL("/", nextUrl));
-        //   } else {
-        //     return true;
-        //   }
-        // }
-        // return true;
-      },
-    },
     adapter: PostgresAdapter(pool),
   } satisfies NextAuthConfig;
 });

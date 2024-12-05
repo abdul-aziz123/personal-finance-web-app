@@ -4,7 +4,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 
-
 import { cn, getColorHexCode } from "@/libs/utils";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,8 @@ import { auth } from "@/auth";
 import AddnewBudget from "@/modals/add_new_budget";
 import DeleteBudget from "@/modals/delete_budget";
 import UpdateBudget from "@/modals/update_budget";
+import { sql } from "@vercel/postgres";
+import { Budget, Transaction } from "@/libs/definitions";
 
 export const metadata: Metadata = {
   title: "Budgets",
@@ -37,19 +38,23 @@ export default async function BudgetsPage() {
 
   if (!userId) redirect("/login");
 
-  const budgets = await db.budget.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-  const transactions = await db.transaction.findMany({
-    where: {
-      userId: userId,
-      amount: {
-        lt: 0,
-      },
-    },
-  });
+  const { rows: budgets } =
+    await sql<Budget>`SELECT * FROM budgets WHERE "userId" = ${userId}`;
+  // const budgets = await db.budget.findMany({
+  //   where: {
+  //     userId: userId,
+  //   },
+  // });
+  const { rows: transactions } =
+    await sql<Transaction>`SELECT * FROM transactions WHERE "userId" = ${userId} AND amount < 0`;
+  // const transactions = await db.transaction.findMany({
+  //   where: {
+  //     userId: userId,
+  //     amount: {
+  //       lt: 0,
+  //     },
+  //   },
+  // });
 
   const chartData = budgets.map((budget) => {
     const categoryTransactions = transactions.filter((transaction) => {
@@ -145,7 +150,7 @@ function ContentSection({ data }: { data: any }) {
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="text-secondary-red border-none bg-transparent"
+                      className="border-none bg-transparent text-secondary-red"
                     >
                       Delete Budget
                     </Button>
@@ -158,10 +163,10 @@ function ContentSection({ data }: { data: any }) {
         </div>
         {/* Content */}
         <div className="flex flex-col gap-4">
-          <p className="text-preset-4 text-grey-500 font-normal">
+          <p className="text-preset-4 font-normal text-grey-500">
             Maximum of ${data.amount.toFixed(2)}
           </p>
-          <div className="bg-beige-100 rounded p-1">
+          <div className="rounded bg-beige-100 p-1">
             <Progress
               className="h-6 rounded bg-transparent"
               maxValue={data.amount}
@@ -177,15 +182,15 @@ function ContentSection({ data }: { data: any }) {
                 style={{ backgroundColor: data.fill }}
               />
               <p className="text-preset-5 text-grey-500">Spent</p>
-              <p className="text-preset-4 text-grey-900 font-bold">
+              <p className="text-preset-4 font-bold text-grey-900">
                 ${Math.abs(data.totalSpent).toFixed(2)}
               </p>
             </div>
             <div className="relative flex flex-1 flex-col justify-between pl-5">
-              <span className="bg-beige-100 absolute bottom-0 left-0 top-0 h-full w-1 rounded-lg" />
+              <span className="absolute bottom-0 left-0 top-0 h-full w-1 rounded-lg bg-beige-100" />
               <p className="text-preset-5 text-grey-500">Free</p>
               <p
-                className={cn("text-preset-4 text-grey-900 font-bold", {
+                className={cn("text-preset-4 font-bold text-grey-900", {
                   "text-secondary-red": data.remaining < 0,
                   "text-secondary-green": data.remaining >= 0,
                 })}
@@ -196,12 +201,12 @@ function ContentSection({ data }: { data: any }) {
           </div>
         </div>
         {/* Latests Spending */}
-        <div className="bg-beige-100 rounded-lg p-4 md:p-5">
+        <div className="rounded-lg bg-beige-100 p-4 md:p-5">
           <div className="flex w-full flex-col gap-5">
             <div className="flex items-center justify-between">
               <h4 className="text-preset-3 text-grey-900">Latest Spending</h4>
               <Link
-                className="text-preset-4 text-grey-500 inline-flex items-center gap-3 font-normal"
+                className="text-preset-4 inline-flex items-center gap-3 font-normal text-grey-500"
                 href={"/transactions"}
               >
                 See All
@@ -216,7 +221,7 @@ function ContentSection({ data }: { data: any }) {
                   .map((transaction: any, index: any) => (
                     <div
                       key={index}
-                      className="border-grey-500 flex items-center justify-between border-opacity-15 pb-4 [&:not(:last-child)]:border-b"
+                      className="flex items-center justify-between border-grey-500 border-opacity-15 pb-4 [&:not(:last-child)]:border-b"
                     >
                       <div className="flex items-center gap-4">
                         <span className="relative h-8 w-8 overflow-hidden rounded-full bg-green-200">
@@ -227,7 +232,7 @@ function ContentSection({ data }: { data: any }) {
                             alt={`${transaction.name}'s image`}
                           />
                         </span>
-                        <h6 className="text-preset-5 text-grey-900 font-bold capitalize">
+                        <h6 className="text-preset-5 font-bold capitalize text-grey-900">
                           {transaction.name}
                         </h6>
                       </div>
@@ -235,7 +240,7 @@ function ContentSection({ data }: { data: any }) {
                       <div className="flex flex-col justify-between text-right">
                         <p
                           className={cn(
-                            "text-preset-5 text-secondary-red font-bold",
+                            "text-preset-5 font-bold text-secondary-red",
                             { "text-secondary-green": transaction.amount > 0 },
                           )}
                         >
@@ -249,7 +254,7 @@ function ContentSection({ data }: { data: any }) {
                     </div>
                   ))
               ) : (
-                <p className="text-preset-4 text-grey-500 text-center font-normal">
+                <p className="text-preset-4 text-center font-normal text-grey-500">
                   You haven&apos;t made any spendings yet.
                 </p>
               )}

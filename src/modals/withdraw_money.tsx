@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pot } from "@prisma/client";
+import { Pot } from "@/libs/definitions";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

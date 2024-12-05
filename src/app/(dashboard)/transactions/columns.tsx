@@ -3,7 +3,7 @@
 import { cn } from "@/libs/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import { Transaction } from "@prisma/client";
+import { Transaction } from "@/libs/definitions";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
