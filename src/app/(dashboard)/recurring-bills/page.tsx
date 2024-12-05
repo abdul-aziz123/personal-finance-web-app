@@ -40,12 +40,12 @@ export default async function RecurringBills() {
   const { rows: distinctRecurringBills } = await sql<{
     name: string;
   }>`SELECT DISTINCT name FROM transactions
-    WHERE amount < 0 AND recurring = true`;
+    WHERE amount < 0 AND recurring = true AND "userId" = ${userId}`;
 
   const recurringBills: RecurringBill[] = await Promise.all(
     distinctRecurringBills.map(async (bill: { name: string }) => {
       const res =
-        await sql<Transaction>`SELECT * FROM transactions WHERE name = ${bill.name} AND amount < 0 AND recurring = true ORDER BY date DESC LIMIT 1`;
+        await sql<Transaction>`SELECT * FROM transactions WHERE name = ${bill.name} AND amount < 0 AND recurring = true AND "userId" = ${userId} ORDER BY date DESC LIMIT 1`;
       const latestTransaction = res.rows[0];
       const today = new Date();
       const transactionDate = new Date(latestTransaction.date);
