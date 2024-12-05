@@ -35,11 +35,6 @@ export default async function TransactionsPage() {
 
   const { rows: data } =
     await sql<Transaction>`SELECT * FROM transactions WHERE "userId" = ${userId}`;
-  // const data = await db.transaction.findMany({
-  //   where: {
-  //     userId,
-  //   },
-  // });
 
   return (
     <div className="container flex flex-col gap-8">

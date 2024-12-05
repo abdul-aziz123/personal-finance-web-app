@@ -26,14 +26,6 @@ export const addBudget = async (values: AddNewBudgetSchema) => {
       INSERT INTO budgets (amount, category, theme, "userId")
       VALUES (${values.maximumSpend}, ${values.categories}, ${values.theme}, ${userId})
     `;
-    // await db.budget.create({
-    //   data: {
-    //     amount: values.maximumSpend,
-    //     category: values.categories,
-    //     theme: values.theme,
-    //     userId,
-    //   },
-    // });
 
     revalidatePath("/", "layout");
     return {
@@ -55,12 +47,6 @@ export const deleteBudget = async (id: string | number) => {
 
   try {
     await sql`DELETE FROM budgets WHERE id = ${Number(id)}`;
-    // await db.budget.delete({
-    //   where: {
-    //     id: Number(id),
-    //   },
-    // });
-
     revalidatePath("/", "layout");
     return {
       success: true,
@@ -94,17 +80,6 @@ export const editBudget = async (
       SET amount = ${values.maximumSpend}, category = ${values.categories}, theme = ${values.theme}
       WHERE id = ${Number(id)} AND "userId" = ${userId}
     `;
-    // await db.budget.update({
-    //   where: {
-    //     id: Number(id),
-    //     userId: userId,
-    //   },
-    //   data: {
-    //     amount: values.maximumSpend,
-    //     category: values.categories,
-    //     theme: values.theme,
-    //   },
-    // });
 
     revalidatePath("/", "layout");
     return {

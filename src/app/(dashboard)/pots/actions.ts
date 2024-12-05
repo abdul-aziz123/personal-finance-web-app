@@ -30,12 +30,6 @@ export const addPot = async ({
   // Check if the user already has a pot with the same theme
   const { rows } =
     await sql<Pot>`SELECT * FROM pots WHERE "userId" = ${userId} AND theme = ${theme}`;
-  // const existingPot = await db.pot.findFirst({
-  //   where: {
-  //     userId,
-  //     theme: theme.toUpperCase() as Theme,
-  //   },
-  // });
 
   if (rows.length > 0) {
     return {
@@ -52,15 +46,7 @@ export const addPot = async ({
 
   try {
     await sql`INSERT INTO pots (name, target, theme, total, "userId") VALUES (${name}, ${target}, ${theme}, 0, ${userId})`;
-    // await db.pot.create({
-    //   data: {
-    //     name,
-    //     target,
-    //     theme: theme.toUpperCase() as Theme,
-    //     total: 0,
-    //     userId,
-    //   },
-    // });
+
     revalidatePath("/", "layout");
     return { success: true, message: "Pot added successfully" };
   } catch (error) {
@@ -78,10 +64,6 @@ export const getThemesForBudget = async () => {
   }
   const { rows: userBudgets } =
     await sql`SELECT theme FROM budgets WHERE "userId" = ${userId}`;
-  // const userBudgets = await db.budget.findMany({
-  //   where: { userId },
-  //   select: { theme: true },
-  // });
 
   const usedThemes = userBudgets.map((budget) => budget.theme);
 
@@ -104,10 +86,6 @@ export const getThemesForPot = async () => {
 
   const { rows: userPots } =
     await sql`SELECT theme FROM pots WHERE "userId" = ${userId}`;
-  // const userPots = await db.pot.findMany({
-  //   where: { userId },
-  //   select: { theme: true },
-  // });
 
   const usedThemes = userPots.map((pot) => pot.theme);
 
@@ -130,20 +108,12 @@ export const deletePot = async (potId: number) => {
   try {
     const { rows } =
       await sql<Pot>`SELECT * FROM pots WHERE id = ${potId} LIMIT 1`;
-    // const res = await db.pot.findFirst({
-    //   where: {
-    //     id: potId,
-    //   },
-    // });
+
     if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
     }
     await sql`DELETE FROM pots WHERE id = ${potId}`;
-    // await db.pot.delete({
-    //   where: {
-    //     id: potId,
-    //   },
-    // });
+
     await updateBalance(Number(userId), rows[0].total);
     revalidatePath("/", "layout");
     return { success: true, message: "Pot deleted successfully" };
@@ -167,14 +137,6 @@ export const updatePot = async (id: number, values: AddNewPotsFormSchema) => {
       WHERE id = ${id}
       RETURNING *
     `;
-    // const updatedPot = await db.pot.update({
-    //   where: { id },
-    //   data: {
-    //     name: values.potName,
-    //     target: values.target,
-    //     theme: values.theme,
-    //   },
-    // });
 
     revalidatePath("/", "layout");
     return {
@@ -197,12 +159,6 @@ export const withdrawMoney = async (potId: number, amount: number) => {
   try {
     const { rows } =
       await sql<Pot>`SELECT * FROM pots WHERE id = ${potId} AND "userId" = ${userId} LIMIT 1`;
-    // const pot = await db.pot.findFirst({
-    //   where: {
-    //     id: potId,
-    //     userId,
-    //   },
-    // });
 
     if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
@@ -216,14 +172,6 @@ export const withdrawMoney = async (potId: number, amount: number) => {
       SET total = ${rows[0].total - amount}
       WHERE id = ${potId}
     `;
-    // await db.pot.update({
-    //   where: { id: potId },
-    //   data: {
-    //     total: {
-    //       decrement: amount,
-    //     },
-    //   },
-    // });
     await updateBalance(Number(userId), amount);
 
     revalidatePath("/", "layout");
@@ -243,12 +191,6 @@ export const addMoney = async (potId: number, amount: number) => {
   try {
     const { rows } =
       await sql<Pot>`SELECT * FROM pots WHERE id = ${potId} AND "userId" = ${userId} LIMIT 1`;
-    // const pot = await db.pot.findFirst({
-    //   where: {
-    //     id: potId,
-    //     userId,
-    //   },
-    // });
 
     if (rows.length == 0) {
       return { success: false, message: "Pot not found" };
@@ -261,11 +203,6 @@ export const addMoney = async (potId: number, amount: number) => {
     }
     const { rows: balances } =
       await sql<Balance>`SELECT * FROM balances WHERE "userId" = ${userId} LIMIT 1`;
-    // const balance = await db.balance.findFirst({
-    //   where: {
-    //     userId,
-    //   },
-    // });
     if (balances.length == 0) {
       return { success: false, message: "Balance not found" };
     }
@@ -277,14 +214,6 @@ export const addMoney = async (potId: number, amount: number) => {
       SET total = ${rows[0].total + amount}
       WHERE id = ${potId}
     `;
-    // await db.pot.update({
-    //   where: { id: potId },
-    //   data: {
-    //     total: {
-    //       increment: amount,
-    //     },
-    //   },
-    // });
     await updateBalance(Number(userId), -amount);
 
     revalidatePath("/", "layout");
@@ -305,11 +234,6 @@ export const getPot = async (id: number) => {
   try {
     const { rows } =
       await sql<Pot>`SELECT * FROM pots WHERE id = ${id} AND "userId" = ${userId} LIMIT 1`;
-    // const pot = await db.pot.findFirst({
-    //   where: {
-    //     id,
-    //   },
-    // });
 
     if (rows.length == 0) {
       return { success: false, message: "Pot not found" };

@@ -39,10 +39,6 @@ export default async function PotsPage() {
     redirect("/login");
   }
 
-  // const POTS = await db.pot.findMany({
-  //   where: { userId: userId },
-  //   orderBy: { name: "asc" },
-  // });
   const { rows: POTS } =
     await sql<Pot>`SELECT * FROM pots WHERE "userId" = ${userId} ORDER BY name ASC`;
 

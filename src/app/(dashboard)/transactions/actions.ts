@@ -22,11 +22,7 @@ export const addTransaction = async (data: AddNewTransactionFormSchema) => {
   }
   const { rows } =
     await sql<Balance>`SELECT * FROM balances WHERE "userId" = ${userId} LIMIT 1`;
-  // const balance = await db.balance.findFirst({
-  //   where: {
-  //     userId,
-  //   },
-  // });
+
   const isValid = addNewTransactionSchema.safeParse(data);
   if (!isValid.success) {
     return { success: false, message: "Invalid data" };
@@ -47,17 +43,6 @@ export const addTransaction = async (data: AddNewTransactionFormSchema) => {
       ("userId", name, "Category", amount, recurring, avatar, date)
       VALUES (${userId}, ${data.name}, ${data.category}, ${data.amount}, ${data.recurring || false}, ${avatar}, ${data.date})
     `;
-    // await db.transaction.create({
-    //   data: {
-    //     userId,
-    //     name: data.name,
-    //     Category: data.category,
-    //     amount: data.amount,
-    //     recurring: data.recurring || false,
-    //     avatar,
-    //     date: data.date,
-    //   },
-    // });
 
     // Update balance
     await updateBalance(Number(userId), data.amount);

@@ -67,25 +67,6 @@ export default async function RecurringBills() {
       };
     }),
   );
-  // await db.transaction.findMany({
-  //   where: {
-  //     userId,
-  //     recurring: true,
-  //     amount: {
-  //       lt: 0,
-  //     },
-  //   },
-  // });
-
-  // const recurringData = await db.transaction.findMany({
-  //   where: {
-  //     userId,
-  //     recurring: true,
-  //     amount: {
-  //       lt: 0,
-  //     },
-  //   },
-  // });
 
   const dueSoonBills = recurringBills.filter(
     (transaction) => transaction.status == "due",

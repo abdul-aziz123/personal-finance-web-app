@@ -40,21 +40,9 @@ export default async function BudgetsPage() {
 
   const { rows: budgets } =
     await sql<Budget>`SELECT * FROM budgets WHERE "userId" = ${userId}`;
-  // const budgets = await db.budget.findMany({
-  //   where: {
-  //     userId: userId,
-  //   },
-  // });
+
   const { rows: transactions } =
     await sql<Transaction>`SELECT * FROM transactions WHERE "userId" = ${userId} AND amount < 0`;
-  // const transactions = await db.transaction.findMany({
-  //   where: {
-  //     userId: userId,
-  //     amount: {
-  //       lt: 0,
-  //     },
-  //   },
-  // });
 
   const chartData = budgets.map((budget) => {
     const categoryTransactions = transactions.filter((transaction) => {

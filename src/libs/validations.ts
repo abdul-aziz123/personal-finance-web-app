@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const addIncomeSchema = z.object({
+  mainIncome: z.number().min(1, "Income must be at least 1"),
+  sideIncome: z.number().min(0, "Income must be at least 0"),
+});
+
 export const addNewPotsSchema = z.object({
   potName: z
     .string()

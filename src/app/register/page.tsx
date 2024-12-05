@@ -2,6 +2,7 @@ import React from "react";
 // import { TabsDemo } from "@/components/starting";
 import Image from "next/image";
 import IllustrationAuthentication from "../../../public/illustration-authentication.svg";
+import AddIncomeForm from "./AddIncomeForm";
 
 export default function page() {
   return (
@@ -29,7 +30,7 @@ export default function page() {
                 <div className="border-Grey100 w-full border-t" />
               </div>
             </div>
-
+            <AddIncomeForm />
             {/* <TabsDemo /> */}
           </div>
         </div>

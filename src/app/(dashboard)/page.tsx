@@ -43,11 +43,6 @@ export default async function Dashboard() {
   let currentBalance: BalanceDB;
   const { rows } =
     await sql<BalanceDB>`SELECT * FROM balances WHERE "userId" = ${userId} LIMIT 1`;
-  // currentBalance = await db.balance.findFirst({
-  //   where: {
-  //     userId: userId,
-  //   },
-  // });
   if (rows.length == 0) {
     const { rows } = await sql<BalanceDB>`
       INSERT INTO balances 
@@ -55,39 +50,15 @@ export default async function Dashboard() {
       VALUES (${userId}, 0, 0, 0) RETURNING *
     `;
     currentBalance = rows[0];
-    // currentBalance = await db.balance.create({
-    //   data: {
-    //     userId: userId,
-    //     current: 0,
-    //     income: 0,
-    //     expenses: 0,
-    //   },
-    // });
   }
   currentBalance = rows[0];
 
   const { rows: budgets } =
     await sql<Budget>`SELECT * FROM budgets WHERE "userId" = ${userId}`;
-
-  // const budgets = await db.budget.findMany({
-  //   where: {
-  //     userId: userId,
-  //   },
-  // });
   const { rows: transactions } =
     await sql<Transaction>`SELECT * FROM transactions WHERE "userId" = ${userId}`;
-  // const transactions = await db.transaction.findMany({
-  //   where: {
-  //     userId: userId,
-  //   },
-  // });
   const { rows: pots } =
     await sql<Pot>`SELECT * FROM pots WHERE "userId" = ${userId}`;
-  // const pots = await db.pot.findMany({
-  //   where: {
-  //     userId: userId,
-  //   },
-  // });
 
   const chartData = budgets.map((budget) => {
     const categoryTransactions = transactions.filter((transaction) => {
