@@ -66,6 +66,7 @@ export const addTransaction = async (data: AddNewTransactionFormSchema) => {
 
     return { success: true, message: "Transaction added successfully" };
   } catch (error) {
+    console.error(error);
     return { success: false, message: "Error adding transaction" };
   }
 };

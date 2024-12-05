@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import SocialLogins from "@/components/SocialLogins";
 import IllustrationAuthentication from "../../../public/illustration-authentication.svg";
 import { auth } from "@/auth";

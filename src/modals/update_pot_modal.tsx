@@ -10,13 +10,10 @@ import { AddNewPotsFormSchema, addNewPotsSchema } from "@/libs/validations";
 
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -53,11 +50,11 @@ export default function UpdatePotModal({ id }: { id: number }) {
   });
 
   const {
-    reset,
     setValue,
     formState: { isSubmitting },
   } = form;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data } = useQuery(["pot", id], async () => getPot(id), {
     onSuccess: (response) => {
       if (response.success && response.data) {
@@ -155,32 +152,36 @@ export default function UpdatePotModal({ id }: { id: number }) {
                               <SelectValue placeholder="Select a theme" />
                             </SelectTrigger>
                             <SelectContent>
-                              {POSTS.map((post: any) => (
-                                <SelectItem
-                                  key={post.name}
-                                  value={post.value}
-                                  disabled={post.isUsed}
-                                >
-                                  <div className="flex w-full items-center justify-between">
-                                    <div className="flex items-center">
-                                      <span
-                                        className="mr-2 h-4 w-4 rounded-full"
-                                        style={{
-                                          backgroundColor: getColorHexCode(
-                                            post.value,
-                                          ),
-                                        }}
-                                      />
-                                      <p>{post.name}</p>
+                              {
+                                /* eslint-disable
+                              @typescript-eslint/no-explicit-any */
+                                POSTS.map((post: any) => (
+                                  <SelectItem
+                                    key={post.name}
+                                    value={post.value}
+                                    disabled={post.isUsed}
+                                  >
+                                    <div className="flex w-full items-center justify-between">
+                                      <div className="flex items-center">
+                                        <span
+                                          className="mr-2 h-4 w-4 rounded-full"
+                                          style={{
+                                            backgroundColor: getColorHexCode(
+                                              post.value,
+                                            ),
+                                          }}
+                                        />
+                                        <p>{post.name}</p>
+                                      </div>
+                                      {post.isUsed && (
+                                        <p className="text-preset-5 ml-4 text-right text-grey-500">
+                                          (Already used)
+                                        </p>
+                                      )}
                                     </div>
-                                    {post.isUsed && (
-                                      <p className="text-preset-5 text-grey-500 ml-4 text-right">
-                                        (Already used)
-                                      </p>
-                                    )}
-                                  </div>
-                                </SelectItem>
-                              ))}
+                                  </SelectItem>
+                                ))
+                              }
                             </SelectContent>
                           </Select>
                         </FormControl>

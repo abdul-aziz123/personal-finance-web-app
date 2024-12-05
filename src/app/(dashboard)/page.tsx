@@ -19,6 +19,16 @@ import Chart from "./chart";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 
+interface ChartData {
+  id: number;
+  category: string;
+  amount: number;
+  fill: string;
+  totalSpent: number;
+  remaining: number;
+  latestTransaction: Transaction[];
+}
+
 export default async function Dashboard() {
   const session = await auth();
   if (!session?.user) {
@@ -186,7 +196,7 @@ function Balance({
 }
 
 function Pots({ pots }: { pots: Pot[] }) {
-  let slicedPots = pots.slice(0, 4);
+  const slicedPots = pots.slice(0, 4);
   const totalSaved = pots.reduce((acc, curr) => {
     return acc + curr.total;
   }, 0);
@@ -236,7 +246,7 @@ function Pots({ pots }: { pots: Pot[] }) {
     </div>
   );
 }
-function Budgets({ chartData }: { chartData: any }) {
+function Budgets({ chartData }: { chartData: ChartData[] }) {
   const slicedChartData = chartData.slice(0, 4);
 
   return (
@@ -259,7 +269,7 @@ function Budgets({ chartData }: { chartData: any }) {
             <p className="text-preset-4 text-grey-300">No Data Provided.</p>
           )}
           <div className="flex flex-col gap-4 lg:w-[98px]">
-            {slicedChartData.map((item: any, index: any) => (
+            {slicedChartData.map((item: ChartData, index: number) => (
               <div
                 key={index}
                 className={`relative flex flex-col items-start pl-4`}
@@ -284,7 +294,7 @@ function Budgets({ chartData }: { chartData: any }) {
   );
 }
 function Transactions({ transactions }: { transactions: Transaction[] }) {
-  let slicedTransactions = transactions.slice(0, 4);
+  const slicedTransactions = transactions.slice(0, 4);
   return (
     <div className="min-h-[200px] break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
@@ -363,10 +373,10 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
     return diffInDays <= 3 && diffInDays >= 0;
   });
 
-  const totalBillsAmount = recurringData.reduce(
-    (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+  // const totalBillsAmount = recurringData.reduce(
+  //   (acc, transaction) => acc + Math.abs(transaction.amount),
+  //   0,
+  // );
 
   const paidBillsTotal = paidBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),

@@ -160,7 +160,7 @@ export default function AddnewTransaction() {
                               onSelect={(date) =>
                                 field.onChange(date ? formatISO(date) : "")
                               }
-                              disabled={(date: any) =>
+                              disabled={(date: Date) =>
                                 date > new Date(new Date().setHours(0, 0, 0, 0))
                               }
                               initialFocus

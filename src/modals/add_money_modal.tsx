@@ -116,7 +116,7 @@ export default function AddMoneyModal({ pot }: { pot: Pot }) {
                             min={0}
                             max={maxAmount}
                             onChange={(e) => {
-                              let value = e.target.value;
+                              const value = e.target.value;
                               if (value === "") {
                                 field.onChange(value);
                                 return;

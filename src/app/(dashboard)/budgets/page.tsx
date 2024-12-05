@@ -113,7 +113,19 @@ export default async function BudgetsPage() {
   );
 }
 
-function ContentSection({ data }: { data: any }) {
+function ContentSection({
+  data,
+}: {
+  data: {
+    id: number;
+    category: string;
+    amount: number;
+    fill: string;
+    totalSpent: number;
+    remaining: number;
+    latestTransaction: Transaction[];
+  };
+}) {
   return (
     <div className="w-full self-start rounded-lg bg-white px-5 py-6 md:px-5 md:py-5 lg:p-8">
       <div className="flex h-full w-full flex-col gap-5">
@@ -218,7 +230,7 @@ function ContentSection({ data }: { data: any }) {
               {data.latestTransaction.length > 0 ? (
                 data.latestTransaction
                   .slice(0, 3)
-                  .map((transaction: any, index: any) => (
+                  .map((transaction: Transaction, index: number) => (
                     <div
                       key={index}
                       className="flex items-center justify-between border-grey-500 border-opacity-15 pb-4 [&:not(:last-child)]:border-b"

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Pot } from "@/libs/definitions";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { getColorHexCode } from "@/libs/utils";
 import { WithdrawFormSchema, withdrawSchema } from "@/libs/validations";
@@ -113,7 +112,7 @@ export default function WithdrawMoney({ pot }: { pot: Pot }) {
                             min={1}
                             max={maxAmount}
                             onChange={(e) => {
-                              let value = e.target.value;
+                              const value = e.target.value;
                               if (value === "") {
                                 field.onChange(value);
                                 return;

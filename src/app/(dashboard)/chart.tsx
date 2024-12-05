@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Label, Pie, PieChart } from "recharts";
+import { Transaction } from "@/libs/definitions";
 
 import { cn } from "@/libs/utils";
 
@@ -19,16 +20,26 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const description = "A donut chart with text";
-export default function Chart({ chartData }: { chartData: any }) {
+interface ChartData {
+  id: number;
+  category: string;
+  amount: number;
+  fill: string;
+  totalSpent: number;
+  remaining: number;
+  latestTransaction: Transaction[];
+}
+
+export default function Chart({ chartData }: { chartData: ChartData[] }) {
   const totalAmount = React.useMemo(() => {
     return chartData.reduce(
-      (acc: any, curr: any) => acc + Math.abs(curr.amount),
+      (acc: number, curr: ChartData) => acc + Math.abs(curr.amount),
       0,
     );
   }, [chartData]);
   const totalSpent = React.useMemo(() => {
     return chartData.reduce(
-      (acc: any, curr: any) => acc + Math.abs(curr.totalSpent),
+      (acc: number, curr: ChartData) => acc + Math.abs(curr.totalSpent),
       0,
     );
   }, [chartData]);
@@ -50,7 +61,7 @@ export default function Chart({ chartData }: { chartData: any }) {
           innerRadius={60}
           strokeWidth={5}
         >
-          {chartData.map((entry: any, index: any) => (
+          {chartData.map((_: ChartData, index: number) => (
             <React.Fragment key={`slice-${index}`}>
               <Label position="inside" />
             </React.Fragment>

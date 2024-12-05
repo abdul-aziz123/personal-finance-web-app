@@ -21,7 +21,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -59,7 +58,6 @@ export default function AddnewBudget() {
   const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : [];
 
   const {
-    reset,
     formState: { isSubmitting },
   } = form;
 
@@ -188,7 +186,7 @@ export default function AddnewBudget() {
                                         <p className="">{post.name}</p>
                                       </div>
                                       {post.isUsed && (
-                                        <p className="text-preset-5 text-grey-500 ml-4 text-right">
+                                        <p className="text-preset-5 ml-4 text-right text-grey-500">
                                           (Already used)
                                         </p>
                                       )}

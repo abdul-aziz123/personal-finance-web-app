@@ -143,27 +143,32 @@ export default function UpdateBudget({ id }: { id: number }) {
                               <SelectValue placeholder="Select a theme" />
                             </SelectTrigger>
                             <SelectContent>
-                              {POSTS.map((post: any) => (
-                                <SelectItem
-                                  key={post.name}
-                                  value={post.value}
-                                  disabled={post.isUsed}
-                                >
-                                  <div className="flex w-full items-center justify-between">
-                                    <div className="flex items-center">
-                                      <span
-                                        className="mr-2 h-4 w-4 rounded-full"
-                                        style={{
-                                          backgroundColor: getColorHexCode(
-                                            post.value,
-                                          ),
-                                        }}
-                                      />
-                                      <p>{post.name}</p>
-                                    </div>
-                                  </div>
-                                </SelectItem>
-                              ))}
+                              {
+                                /* eslint-disable
+                              @typescript-eslint/no-explicit-any */ POSTS.map(
+                                  (post: any) => (
+                                    <SelectItem
+                                      key={post.name}
+                                      value={post.value}
+                                      disabled={post.isUsed}
+                                    >
+                                      <div className="flex w-full items-center justify-between">
+                                        <div className="flex items-center">
+                                          <span
+                                            className="mr-2 h-4 w-4 rounded-full"
+                                            style={{
+                                              backgroundColor: getColorHexCode(
+                                                post.value,
+                                              ),
+                                            }}
+                                          />
+                                          <p>{post.name}</p>
+                                        </div>
+                                      </div>
+                                    </SelectItem>
+                                  ),
+                                )
+                              }
                             </SelectContent>
                           </Select>
                         </FormControl>

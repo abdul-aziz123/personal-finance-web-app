@@ -93,14 +93,14 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center gap-2">
               <label
                 htmlFor="primary-sort-select"
-                className="text-preset-5 text-grey-500 font-normal"
+                className="text-preset-5 font-normal text-grey-500"
               >
                 Sort by
               </label>
               <Select
                 name="primary-sort-select"
                 onValueChange={(value) => {
-                  let desc = false;
+                  // let desc = false;
                   if (value === "latest") {
                     setSorting([{ id: "date", desc: true }]);
                   } else if (value === "oldest") {
@@ -132,7 +132,7 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center gap-2">
               <label
                 htmlFor="secondary-sort-select"
-                className="text-preset-5 text-grey-500 font-normal"
+                className="text-preset-5 font-normal text-grey-500"
               >
                 Filter by Category
               </label>

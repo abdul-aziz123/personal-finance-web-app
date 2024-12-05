@@ -1,7 +1,7 @@
 import React from "react";
 // import { TabsDemo } from "@/components/starting";
 import Image from "next/image";
-import IllustrationAuthentication from "../../../public/assets/images/illustration-authentication.svg";
+import IllustrationAuthentication from "../../../public/illustration-authentication.svg";
 
 export default function page() {
   return (
