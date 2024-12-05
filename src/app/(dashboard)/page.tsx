@@ -123,7 +123,11 @@ export default async function Dashboard() {
         <h1 className="text-preset-1 text-grey-900">Overview</h1>
         <LogoutButton />
       </div>
-      <Balance transactions={transactions} balance={currentBalance} />
+      <Balance
+        transactions={transactions}
+        balance={currentBalance}
+        userId={Number(userId)}
+      />
 
       <div className="columns-1 gap-4 lg:columns-2">
         <div className="mb-4 break-inside-avoid">
@@ -145,12 +149,14 @@ export default async function Dashboard() {
   );
 }
 
-function Balance({
+async function Balance({
   transactions,
   balance,
+  userId,
 }: {
   transactions: Transaction[];
   balance: BalanceDB;
+  userId: number;
 }) {
   // filter transactions of this current month
   const currentMonthExpenses = transactions
@@ -164,6 +170,7 @@ function Balance({
       );
     })
     .reduce((acc, transaction) => acc + Math.abs(transaction.amount), 0);
+  await sql`UPDATE balances SET expenses = ${currentMonthExpenses} WHERE "userId" = ${userId}`;
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6">
       <div className="w-full rounded-lg bg-grey-900 p-5 md:p-6">
