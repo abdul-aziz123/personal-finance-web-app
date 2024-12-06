@@ -54,13 +54,9 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Chevron: ({ ...props }) =>
-          props.orientation == "left" ? (
-            <ChevronLeft className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4" />
-          ),
-        // NextMonthButton: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
+        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}
     />
