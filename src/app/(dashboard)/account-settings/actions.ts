@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Balance } from "@/libs/definitions";
 import { addIncomeSchema } from "@/libs/validations";
 import { sql } from "@vercel/postgres";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export async function addIncome(values: z.infer<typeof addIncomeSchema>) {
@@ -26,6 +27,8 @@ export async function addIncome(values: z.infer<typeof addIncomeSchema>) {
       INSERT INTO balances ("userId", current, income, expenses)
       VALUES (${userId}, ${values.mainIncome + values.sideIncome}, ${values.mainIncome + values.sideIncome},0)
     `;
+    revalidatePath("/", "layout");
+    return { success: true, message: "Income added successfully" };
   }
   try {
     await sql`
@@ -34,6 +37,7 @@ export async function addIncome(values: z.infer<typeof addIncomeSchema>) {
             income =  ${values.mainIncome + values.sideIncome}
         WHERE "userId" = ${userId}
     `;
+    revalidatePath("/", "layout");
     return { success: true, message: "Income added successfully" };
   } catch (error) {
     console.error(error);
