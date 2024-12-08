@@ -9,7 +9,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(() => {
   return {
     pages: {
       signIn: "/login",
-      newUser: "/register",
     },
     providers: [Google, Github],
     adapter: PostgresAdapter(pool),
