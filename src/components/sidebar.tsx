@@ -18,6 +18,7 @@ import {
   Receipt,
   ShortLogo,
 } from "./ui/icons";
+import { SquareUser } from "lucide-react";
 
 const NAV_LINKS = [
   {
@@ -50,6 +51,12 @@ const NAV_LINKS = [
     icon: <Receipt />,
     link: "/recurring-bills",
   },
+  {
+    id: 5,
+    name: "Account Settings",
+    icon: <SquareUser className="size-5" />,
+    link: "/account-settings",
+  },
 ] as const;
 type NavLinkType = (typeof NAV_LINKS)[number];
 
@@ -72,7 +79,7 @@ export default function SideBar() {
         width: isActive ? "300px" : "88px",
       }}
       transition={{ duration: 0.3 }}
-      className="bg-grey-900 text-grey-300 hidden h-screen flex-col gap-6 rounded-r-lg lg:flex"
+      className="hidden h-screen flex-col gap-6 rounded-r-lg bg-grey-900 text-grey-300 lg:flex"
     >
       {/* LOGO */}
       <div className="flex h-[101px] items-center justify-start px-8 py-10">
@@ -132,7 +139,7 @@ export default function SideBar() {
           initial={{ opacity: 0 }}
           animate={{ opacity: isActive ? 1 : 0 }}
           transition={{ duration: 0.3 }}
-          className="text-preset-3 text-grey-300 truncate font-bold group-hover:text-white"
+          className="text-preset-3 truncate font-bold text-grey-300 group-hover:text-white"
         >
           Minimize Menu
         </motion.p>
@@ -150,7 +157,7 @@ function NavLink({ link, isActive }: { link: NavLinkType; isActive: boolean }) {
     <Link
       href={link.link}
       className={cn("group flex items-center gap-4 px-8 py-4", {
-        "border-secondary-green rounded-r-lg border-l-4 bg-white text-white":
+        "rounded-r-lg border-l-4 border-secondary-green bg-white text-white":
           isLinkActive && isActive,
         "hover:bg-grey-800 hover:text-white": !isLinkActive,
       })}
