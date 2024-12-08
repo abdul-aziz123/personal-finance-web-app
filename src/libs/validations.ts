@@ -3,6 +3,7 @@ import { z } from "zod";
 export const addIncomeSchema = z.object({
   mainIncome: z.number().min(1, "Income must be at least 1"),
   sideIncome: z.number().min(0, "Income must be at least 0"),
+  addToCurrent: z.boolean().default(false).optional(),
 });
 
 export const addNewPotsSchema = z.object({
@@ -102,6 +103,7 @@ export const addNewBudgetSchema = z.object({
   ),
 });
 
+export type AddIncomeSchema = z.infer<typeof addIncomeSchema>;
 export type AddNewBudgetSchema = z.infer<typeof addNewBudgetSchema>;
 export type AddNewTransactionFormSchema = z.infer<
   typeof addNewTransactionSchema
